@@ -10,27 +10,27 @@ interface PageProps {
   };
 }
 
-/*creating a function that reconstructs the url*/
+/* Function to reconstruct the URL from a catch-all route */
 const reconstructUrl = (url: string[]) => {
-  const decodedComponent = url.map((compValue) =>
-    decodeURIComponent(compValue)
-  );
-  return decodedComponent.join("//");
+  const decodedComponents = url.map(decodeURIComponent);
+  return decodedComponents.join("//");
 };
 
-const UrlPage = async ({ params }: PageProps) => {
+export default async function UrlPage({ params }: PageProps) {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get("sessionId")?.value;
-  //to get the originial url intead of https%3A etc
-  const resolveedParams = await params;
-  const reconstructedUrl = reconstructUrl(resolveedParams.url);
 
-  const sessionId = (reconstructedUrl + "--" + sessionCookie).replace(
+  // Ensure `params` is awaited before accessing its properties
+  const resolvedParams = await params; // Ensure params are resolved
+  const reconstructedUrl = reconstructUrl(resolvedParams.url);
+
+  // Generate a unique session ID
+  const sessionId = (reconstructedUrl + "--" + (sessionCookie || "")).replace(
     /\//g,
     ""
   );
 
-  //to avoid loading the same data multiple times on reload
+  // Check if the URL has already been indexed
   const isAlreadyIndexed = await redis.sismember(
     "indexedUrls",
     reconstructedUrl
@@ -41,6 +41,7 @@ const UrlPage = async ({ params }: PageProps) => {
     sessionId,
   });
 
+  // Add the URL to the context if it's not already indexed
   if (!isAlreadyIndexed) {
     await ragChat.context.add({
       type: "html",
@@ -54,9 +55,4 @@ const UrlPage = async ({ params }: PageProps) => {
   }
 
   return <ChatWrapper sessionId={sessionId} initialMessage={initialMessage} />;
-};
-
-export default UrlPage;
-
-// like when we create a route for about we create a folder named about and then inside we create a file named page.tsx
-// this is the slug folder which catches all the routes so we use [...] to catch all the routes which comes after the url of our website /
+}
