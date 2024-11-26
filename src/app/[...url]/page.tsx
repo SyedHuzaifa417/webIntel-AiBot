@@ -4,39 +4,28 @@ import { ragChat } from "@/lib/ragChat";
 import { cookies } from "next/headers";
 import React from "react";
 
-// Update the PageProps interface
-interface PageProps {
+// Use Next.js generated types for dynamic routes
+export interface PageProps {
   params: {
     url: string[];
   };
 }
 
-/*creating a function that reconstructs the url*/
-const reconstructUrl = ({ url }: { url: string[] }) => {
-  const decodedComponent = url.map((compValue) =>
-    decodeURIComponent(compValue)
-  );
-  return decodedComponent.join("//");
+const reconstructUrl = (url: string[]) => {
+  return url.map(decodeURIComponent).join("//");
 };
 
-const UrlPage = async ({ params }: PageProps) => {
+export default async function UrlPage({ params }: Readonly<PageProps>) {
   const cookieStore = cookies();
   const sessionCookie = cookieStore.get("sessionId")?.value;
 
-  // Ensure params.url is an array
-  const urlArray = Array.isArray(params.url) ? params.url : [params.url];
-
-  //to get the original url instead of https%3A etc
-  const reconstructedUrl = reconstructUrl({
-    url: urlArray,
-  });
+  const reconstructedUrl = reconstructUrl(params.url);
 
   const sessionId = (reconstructedUrl + "--" + sessionCookie).replace(
     /\//g,
     ""
   );
 
-  //to avoid loading the same data multiple times on reload
   const isAlreadyIndexed = await redis.sismember(
     "indexedUrls",
     reconstructedUrl
@@ -60,9 +49,15 @@ const UrlPage = async ({ params }: PageProps) => {
   }
 
   return <ChatWrapper sessionId={sessionId} initialMessage={initialMessage} />;
-};
+}
 
-export default UrlPage;
+// Explicitly define metadata if needed
+export async function generateMetadata({ params }: PageProps) {
+  const reconstructedUrl = reconstructUrl(params.url);
+  return {
+    title: `Insights for ${reconstructedUrl}`,
+  };
+}
 
 // like when we create a route for about we create a folder named about and then inside we create a file named page.tsx
 // this is the slug folder which catches all the routes so we use [...] to catch all the routes which comes after the url of our website /
