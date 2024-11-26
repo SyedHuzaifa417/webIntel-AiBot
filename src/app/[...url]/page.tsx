@@ -4,7 +4,7 @@ import { ragChat } from "@/lib/ragChat";
 import { cookies } from "next/headers";
 import React from "react";
 
-interface PageProps {
+export interface PageProps {
   params: {
     url: string[];
   };
@@ -16,13 +16,16 @@ const reconstructUrl = (url: string[]) => {
   return decodedComponents.join("//");
 };
 
-export default async function UrlPage({ params }: PageProps) {
-  const cookieStore = await cookies();
+export default async function UrlPage({
+  params,
+}: {
+  params: { url: string[] };
+}) {
+  const cookieStore = cookies();
   const sessionCookie = cookieStore.get("sessionId")?.value;
 
-  // Ensure `params` is awaited before accessing its properties
-  const resolvedParams = await params; // Ensure params are resolved
-  const reconstructedUrl = reconstructUrl(resolvedParams.url);
+  // Reconstruct the URL
+  const reconstructedUrl = reconstructUrl(params.url);
 
   // Generate a unique session ID
   const sessionId = (reconstructedUrl + "--" + (sessionCookie || "")).replace(
@@ -55,4 +58,18 @@ export default async function UrlPage({ params }: PageProps) {
   }
 
   return <ChatWrapper sessionId={sessionId} initialMessage={initialMessage} />;
+}
+
+/* Dynamic Metadata */
+export async function generateMetadata({
+  params,
+}: {
+  params: { url: string[] };
+}) {
+  const reconstructedUrl = reconstructUrl(params.url);
+
+  return {
+    title: `Insights for ${reconstructedUrl}`,
+    description: `Get insights and context for the URL: ${reconstructedUrl}.`,
+  };
 }
