@@ -4,28 +4,33 @@ import { ragChat } from "@/lib/ragChat";
 import { cookies } from "next/headers";
 import React from "react";
 
-// Use Next.js generated types for dynamic routes
-export interface PageProps {
+interface PageProps {
   params: {
     url: string[];
   };
 }
 
+/*creating a function that reconstructs the url*/
 const reconstructUrl = (url: string[]) => {
-  return url.map(decodeURIComponent).join("//");
+  const decodedComponent = url.map((compValue) =>
+    decodeURIComponent(compValue)
+  );
+  return decodedComponent.join("//");
 };
 
-export default async function UrlPage({ params }: Readonly<PageProps>) {
-  const cookieStore = cookies();
+const UrlPage = async ({ params }: PageProps) => {
+  const cookieStore = await cookies();
   const sessionCookie = cookieStore.get("sessionId")?.value;
-
-  const reconstructedUrl = reconstructUrl(params.url);
+  //to get the originial url intead of https%3A etc
+  const resolveedParams = await params;
+  const reconstructedUrl = reconstructUrl(resolveedParams.url);
 
   const sessionId = (reconstructedUrl + "--" + sessionCookie).replace(
     /\//g,
     ""
   );
 
+  //to avoid loading the same data multiple times on reload
   const isAlreadyIndexed = await redis.sismember(
     "indexedUrls",
     reconstructedUrl
@@ -49,15 +54,9 @@ export default async function UrlPage({ params }: Readonly<PageProps>) {
   }
 
   return <ChatWrapper sessionId={sessionId} initialMessage={initialMessage} />;
-}
+};
 
-// Explicitly define metadata if needed
-export async function generateMetadata({ params }: PageProps) {
-  const reconstructedUrl = reconstructUrl(params.url);
-  return {
-    title: `Insights for ${reconstructedUrl}`,
-  };
-}
+export default UrlPage;
 
 // like when we create a route for about we create a folder named about and then inside we create a file named page.tsx
 // this is the slug folder which catches all the routes so we use [...] to catch all the routes which comes after the url of our website /
