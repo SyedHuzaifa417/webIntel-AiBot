@@ -1,6 +1,7 @@
 import ChatWrapper from "@/components/ChatWrapper";
 import { redis } from "@/lib/radis";
 import { ragChat } from "@/lib/ragChat";
+import { cookies } from "next/headers";
 import React from "react";
 
 interface PageProps {
@@ -14,12 +15,21 @@ const reconstructUrl = ({ url }: { url: string[] }) => {
   const decodedComponent = url.map((compValue) =>
     decodeURIComponent(compValue)
   );
-  return decodedComponent.join("/");
+  return decodedComponent.join("//");
 };
 
 const UrlPage = async ({ params }: PageProps) => {
+  const cookieStore = await cookies();
+  const sessionCookie = cookieStore.get("sessionId")?.value;
   //to get the originial url intead of https%3A etc
-  const reconstructedUrl = reconstructUrl({ url: params.url as string[] });
+  const reconstructedUrl = reconstructUrl({
+    url: params.url as string[],
+  });
+
+  const sessionId = (reconstructedUrl + "--" + sessionCookie).replace(
+    /\//g,
+    ""
+  );
 
   //to avoid loading the same data multiple times on reload
   const isAlreadyIndexed = await redis.sismember(
@@ -27,7 +37,10 @@ const UrlPage = async ({ params }: PageProps) => {
     reconstructedUrl
   );
 
-  const sessionId = "mock-session-id";
+  const initialMessage = await ragChat.history.getMessages({
+    amount: 10,
+    sessionId,
+  });
 
   if (!isAlreadyIndexed) {
     await ragChat.context.add({
@@ -41,7 +54,7 @@ const UrlPage = async ({ params }: PageProps) => {
     await redis.sadd("indexedUrls", reconstructedUrl);
   }
 
-  return <ChatWrapper sessionId={sessionId} />;
+  return <ChatWrapper sessionId={sessionId} initialMessage={initialMessage} />;
 };
 
 export default UrlPage;
