@@ -4,9 +4,10 @@ import { ragChat } from "@/lib/ragChat";
 import { cookies } from "next/headers";
 import React from "react";
 
+// Update the PageProps interface
 interface PageProps {
   params: {
-    url: string | string[] | undefined;
+    url: string[];
   };
 }
 
@@ -19,11 +20,15 @@ const reconstructUrl = ({ url }: { url: string[] }) => {
 };
 
 const UrlPage = async ({ params }: PageProps) => {
-  const cookieStore = await cookies();
+  const cookieStore = cookies();
   const sessionCookie = cookieStore.get("sessionId")?.value;
-  //to get the originial url intead of https%3A etc
+
+  // Ensure params.url is an array
+  const urlArray = Array.isArray(params.url) ? params.url : [params.url];
+
+  //to get the original url instead of https%3A etc
   const reconstructedUrl = reconstructUrl({
-    url: params.url as string[],
+    url: urlArray,
   });
 
   const sessionId = (reconstructedUrl + "--" + sessionCookie).replace(
