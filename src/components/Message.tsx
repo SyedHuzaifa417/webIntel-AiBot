@@ -5,9 +5,14 @@ import React from "react";
 interface MessageProps {
   content: string;
   isUserMessage: boolean;
+  isLoading?: boolean;
 }
 
-const Message = ({ content, isUserMessage }: MessageProps) => {
+const Message = ({
+  content,
+  isUserMessage,
+  isLoading = false,
+}: MessageProps) => {
   return (
     <div
       className={cn("py-2", {
@@ -24,7 +29,7 @@ const Message = ({ content, isUserMessage }: MessageProps) => {
         >
           <div
             className={cn(
-              "size-10 shrink-0  aspect-square rounded-full border border-zinc-500 bg-fuchsia-800/80 flex items-center justify-center",
+              "size-10 shrink-0 aspect-square rounded-full border border-zinc-500 bg-fuchsia-800/80 flex items-center justify-center",
               {
                 "bg-blue-900/60 border-blue-700 text-zinc-200": isUserMessage,
               }
@@ -44,20 +49,28 @@ const Message = ({ content, isUserMessage }: MessageProps) => {
           >
             <div className="flex items-center space-x-2">
               <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                {isUserMessage ? "You" : "Website"}
+                {isUserMessage ? "You" : "WebAI"}
               </span>
             </div>
-            <p
-              className={cn(
-                "text-sm font-normal py-2.5 text-gray-900 dark:text-gray-200",
-                {
-                  "text-right": isUserMessage,
-                  "text-left": !isUserMessage,
-                }
-              )}
-            >
-              {content}
-            </p>
+            {isLoading && !isUserMessage ? (
+              <div className="flex items-center space-x-1 py-2.5">
+                <span className="animate-pulse text-gray-500">•</span>
+                <span className="animate-pulse delay-150 text-gray-500">•</span>
+                <span className="animate-pulse delay-300 text-gray-500">•</span>
+              </div>
+            ) : (
+              <p
+                className={cn(
+                  "text-sm font-normal py-2.5 text-gray-900 dark:text-gray-200",
+                  {
+                    "text-right": isUserMessage,
+                    "text-left": !isUserMessage,
+                  }
+                )}
+              >
+                {content}
+              </p>
+            )}
           </div>
         </div>
       </div>

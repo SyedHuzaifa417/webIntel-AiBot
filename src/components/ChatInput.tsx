@@ -5,7 +5,7 @@ import { Send } from "lucide-react";
 import { type useChat } from "ai/react";
 
 type HandleInputChange = ReturnType<typeof useChat>["handleInputChange"];
-type HandleSubmit = ReturnType<typeof useChat>["handleSubmit"];
+type HandleSubmit = (event?: React.FormEvent<HTMLFormElement>) => void;
 type SetInput = ReturnType<typeof useChat>["setInput"];
 
 interface ChatInputProps {
@@ -26,7 +26,13 @@ export const ChatInput = ({
       <div className="mx-2 flex flex-row gap-3 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
         <div className="relative flex h-full flex-1 items-stretch md:flex-col">
           <div className="relative flex flex-col w-full flex-grow p-4">
-            <form onSubmit={handleSubmit} className="relative">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(e);
+              }}
+              className="relative"
+            >
               <Textarea
                 minRows={4}
                 autoFocus
