@@ -16,12 +16,12 @@ const reconstructUrl = (url: string[]) => {
   return decodedComponent.join("//");
 };
 
-const UrlPage = async (params: Params) => {
+export default async function UrlPage({ params }: { params: Params }) {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get("sessionId")?.value;
   //to get the originial url intead of https%3A etc
-  const resolveedParams = await params;
-  const reconstructedUrl = reconstructUrl(resolveedParams.url);
+  const { url } = await params;
+  const reconstructedUrl = reconstructUrl(url);
 
   const sessionId = (reconstructedUrl + "--" + sessionCookie).replace(
     /\//g,
@@ -52,9 +52,7 @@ const UrlPage = async (params: Params) => {
   }
 
   return <ChatWrapper sessionId={sessionId} initialMessage={initialMessage} />;
-};
-
-export default UrlPage;
+}
 
 // like when we create a route for about we create a folder named about and then inside we create a file named page.tsx
 // this is the slug folder which catches all the routes so we use [...] to catch all the routes which comes after the url of our website /
