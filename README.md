@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# **WebIntel - AI-Powered Wikipedia Question Answering Tool**
 
-## Getting Started
+WebIntel is an AI-driven web application that answers your questions about any Wikipedia page. Leveraging advanced AI, WebIntel simplifies exploring Wikipedia content.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## **Features**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- 🔍 **Analyze Any Wikipedia Page**: Process any Wikipedia URL.  
+- 🤖 **AI-Powered Responses**: Get precise answers to your questions.  
+- ⚡ **Fast and Efficient**: Minimal response times for a smooth experience.  
+- 💾 **Caching**: Redis ensures no repeated processing of the same page.  
+- 📊 **Contextual Insights**: Extracts the most relevant data for better answers.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## **Tech Stack**
 
-## Learn More
+### **Frontend**  
+- Next.js (App Router)  
+- React  
+- Tailwind CSS  
 
-To learn more about Next.js, take a look at the following resources:
+### **Backend**  
+- Node.js  
+- Redis (for caching)  
+- AI Integration (OpenAI GPT)  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### **Hosting**  
+- Vercel  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## **Installation**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Clone the Repository**  
+   ```bash
+   git clone https://github.com/SyedHuzaifa417/webIntel-AiBot.git
+   cd webIntel-AiBot
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Install Dependencies
+   ```bash
+ 
+    npm install
+
+3. Set Up Environment Variables
+Create a .env file in the root directory with the following:
+
+   ```env
+   
+   UPSTASH_VECTOR_REST_URL=***********
+   UPSTASH_VECTOR_REST_TOKEN=***********
+   QSTASH_TOKEN=***********
+
+   UPSTASH_REDIS_REST_URL=***********
+   UPSTASH_REDIS_REST_TOKEN=***********
+4. Run the Development Server
+    ```bash
+    npm run dev
+
+## **Usage**
+
+1. Visit the home page.
+2. Enter a Wikipedia page URL.
+3. Ask any question related to the page.
+4. Get instant answers powered by AI.
+
+## **Live Demo**
+Try WebIntel: https://webintel.vercel.app
+
+## **Contributing**
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Commit your changes.
+4. Open a pull request for review.
+
+## **License**
+This project is licensed under the MIT License.
+
