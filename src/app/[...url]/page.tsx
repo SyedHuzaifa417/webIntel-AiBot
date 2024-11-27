@@ -4,11 +4,11 @@ import { ragChat } from "@/lib/ragChat";
 import { cookies } from "next/headers";
 import React from "react";
 
-interface PageProps {
+type Params = {
   params: {
     url: string[];
   };
-}
+};
 
 /*creating a function that reconstructs the url*/
 const reconstructUrl = (url: string[]) => {
@@ -18,7 +18,7 @@ const reconstructUrl = (url: string[]) => {
   return decodedComponent.join("//");
 };
 
-const UrlPage = async ({ params }: PageProps) => {
+const UrlPage = async ({ params }: Params) => {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get("sessionId")?.value;
   //to get the originial url intead of https%3A etc
