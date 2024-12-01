@@ -17,14 +17,15 @@ WebIntel is an AI-driven web application that answers your questions about any W
 ## **Tech Stack**
 
 ### **Frontend**  
-- Next.js (App Router)  
+- Next.js (App Router)
 - React  
-- Tailwind CSS  
+- Tailwind CSS
+- framer-motion
 
 ### **Backend**  
 - Node.js  
 - Redis (for caching)  
-- AI Integration (OpenAI GPT)  
+- AI Integration 
 
 ### **Hosting**  
 - Vercel  
